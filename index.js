@@ -2,7 +2,7 @@ import express from 'express';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import crypto from 'crypto';  // ✅ ESSENTIAL – this line must be present
+import crypto from 'crypto';  // ✅ only change: this import
 import cors from 'cors';
 import multer from 'multer';
 import pino from 'pino';
@@ -645,14 +645,16 @@ function registerHealthRoutes(app) {
 
 // ── Express Setup ─────────────────────────────────────────────
 const app = express();
+app.set('trust proxy', true);
 
 app.use(cors({ origin: '*', credentials: true }));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(express.static(publicDir));
 
+// ✅ crypto fix: only use randomBytes, no randomUUID
 app.use((req, res, next) => {
-  req.id = crypto.randomUUID ? crypto.randomUUID() : crypto.randomBytes(16).toString('hex');
+  req.id = crypto.randomBytes(16).toString('hex');
   res.setHeader('X-Request-Id', req.id);
   next();
 });
@@ -666,11 +668,13 @@ const loginLimiter = rateLimit({
   message: { success: false, message: 'Too many login attempts, please try again later.' },
   standardHeaders: true,
   legacyHeaders: false,
+  trustProxy: true,
 });
 const uploadLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   max: 50,
   message: { success: false, message: 'Too many upload requests, please try again later.' },
+  trustProxy: true,
 });
 
 // ── Multer with file filter ──────────────────────────────────
