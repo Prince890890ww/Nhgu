@@ -2,14 +2,13 @@ import express from 'express';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import crypto from 'crypto';  // ✅ FIXED – crypto is now imported
+import crypto from 'crypto';  // ✅ ESSENTIAL – this line must be present
 import cors from 'cors';
 import multer from 'multer';
 import pino from 'pino';
 import PQueue from 'p-queue';
 import dotenv from 'dotenv';
 import rateLimit from 'express-rate-limit';
-// ✅ FIXED – named import for makeWASocket (works with all Baileys versions)
 import {
   makeWASocket,
   useMultiFileAuthState,
