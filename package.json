@@ -1,9 +1,9 @@
 {
-  "name": "whatsapp-bot",
-  "version": "4.0.0",
-  "description": "Production-ready WhatsApp bot using Baileys and Express",
-  "type": "module",
+  "name": "whatsapp-bulk-messenger",
+  "version": "1.0.0",
+  "description": "WhatsApp bulk messaging with pairing code and multi-session support",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js"
@@ -11,27 +11,18 @@
   "dependencies": {
     "@hapi/boom": "^10.0.1",
     "@whiskeysockets/baileys": "^6.7.9",
+    "chalk": "^5.4.1",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
-    "express": "^4.19.2",
-    "express-rate-limit": "^7.4.0",
-    "ioredis": "^5.4.1",
+    "express": "^4.21.2",
     "multer": "^1.4.5-lts.1",
-    "p-queue": "^7.4.1",
-    "pino": "^9.2.0"
+    "pino": "^9.6.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.0"
+    "nodemon": "^3.1.9"
   },
   "engines": {
     "node": ">=18.0.0"
   },
-  "keywords": [
-    "whatsapp",
-    "baileys",
-    "bot",
-    "express"
-  ],
-  "author": "Your Name",
-  "license": "MIT"
+  "author": "",
+  "license": "ISC"
 }
