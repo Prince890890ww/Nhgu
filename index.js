@@ -2,14 +2,14 @@ import express from 'express';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import crypto from 'crypto';
+import crypto from 'crypto';  // ✅ essential – this fixes "crypto is not defined"
 import cors from 'cors';
 import multer from 'multer';
 import pino from 'pino';
 import PQueue from 'p-queue';
 import dotenv from 'dotenv';
 import rateLimit from 'express-rate-limit';
-// ✅ FIX: use named import for makeWASocket as well
+// ✅ named import for makeWASocket (works with all Baileys versions)
 import {
   makeWASocket,
   useMultiFileAuthState,
