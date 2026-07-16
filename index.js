@@ -9,7 +9,9 @@ import pino from 'pino';
 import PQueue from 'p-queue';
 import dotenv from 'dotenv';
 import rateLimit from 'express-rate-limit';
-import makeWASocket, {
+// ✅ FIX: use named import for makeWASocket as well
+import {
+  makeWASocket,
   useMultiFileAuthState,
   makeCacheableSignalKeyStore,
   DisconnectReason,
@@ -137,14 +139,10 @@ const sessionStats = {};
 const connectionLocks = new Map();
 let readiness = false;
 
-// Helper to check if a socket is actually connected (using Baileys v6+)
 function isSocketConnected(sock) {
   if (!sock) return false;
-  // Check if the socket has a user object (set when connected)
   if (sock.user) return true;
-  // Alternatively check WebSocket readyState
   if (sock.ws && sock.ws.readyState === 1) return true;
-  // Check auth creds registered
   if (sock.authState?.creds?.registered) return true;
   return false;
 }
@@ -183,18 +181,14 @@ function cleanupSending(uniqueKey) {
   clearReconnectTimer(uniqueKey);
 }
 
-// Safely close a socket – use WebSocket close if available
 async function closeSocketSafely(sock) {
   if (!sock) return;
   try {
-    // Remove all listeners to prevent memory leaks
     sock.ev.removeAllListeners();
-    // Close WebSocket if present and open
     if (sock.ws && sock.ws.readyState === 1) {
       sock.ws.close();
       logger.debug('WebSocket closed');
     } else if (typeof sock.end === 'function') {
-      // Fallback to end() if ws not available
       await sock.end();
       logger.debug('Socket ended via end()');
     } else {
@@ -291,7 +285,6 @@ async function connectAndLoginInternal(phoneNumber, uniqueKey, sendPairingCode) 
 
       activeSockets[uniqueKey] = sock;
 
-      // Check registration using optional chaining
       const isRegistered = sock.authState?.creds?.registered ?? false;
       if (!isRegistered && !pairingCodeSent) {
         await new Promise(r => setTimeout(r, 2000));
@@ -327,7 +320,6 @@ async function connectAndLoginInternal(phoneNumber, uniqueKey, sendPairingCode) 
         }
       }
 
-      // ── Event: connection.update ──
       sock.ev.on('connection.update', async (update) => {
         const { connection, lastDisconnect } = update;
 
@@ -342,7 +334,6 @@ async function connectAndLoginInternal(phoneNumber, uniqueKey, sendPairingCode) 
             sendPairingCode(null, true);
           }
 
-          // Resume sending if flags are set (cleanupSending already called, so safe)
           const sess = userSessions[uniqueKey];
           if (sess) {
             if (sess.messaging && sess.messages) {
@@ -371,7 +362,6 @@ async function connectAndLoginInternal(phoneNumber, uniqueKey, sendPairingCode) 
           logger.warn({ uniqueKey, reason }, 'Disconnected');
           updateReadiness();
 
-          // Handle specific disconnect reasons
           if (reason === DisconnectReason.badSession) {
             logger.warn({ uniqueKey }, 'Bad session – deleting folder');
             removeDir(sessionPath);
@@ -388,7 +378,6 @@ async function connectAndLoginInternal(phoneNumber, uniqueKey, sendPairingCode) 
             removeDir(sessionPath);
           }
 
-          // Common reconnect (infinite) – only if not stopped
           if (!stopFlags[uniqueKey]?.stopped) {
             const currentAttempt = (reconnectAttempts[uniqueKey] || 0) + 1;
             reconnectAttempts[uniqueKey] = currentAttempt;
@@ -474,7 +463,6 @@ function startSending(uniqueKey, target, items, options = {}) {
     return;
   }
 
-  // Clean up any existing sending for this session
   cleanupSending(uniqueKey);
 
   if (!sessionStats[uniqueKey]) {
@@ -487,11 +475,9 @@ function startSending(uniqueKey, target, items, options = {}) {
   const stopFlag = { stopped: false };
   setStopFlag(uniqueKey, stopFlag);
 
-  // Per‑session queue to ensure sequential sending and to track queue size
   const perSessionQueue = new PQueue({ concurrency: 1 });
   setSenderQueue(uniqueKey, perSessionQueue);
 
-  // Define the send task
   const sendOne = async () => {
     if (stopped || stopFlag.stopped) return;
     if (!getSocket(uniqueKey) || !isSocketConnected(getSocket(uniqueKey))) {
@@ -539,7 +525,6 @@ function startSending(uniqueKey, target, items, options = {}) {
           throw new Error(`Unsupported type: ${type}`);
       }
 
-      // Use global queue for overall concurrency limit
       await globalSendQueue.add(() => sendPromise);
 
       sessionStats[uniqueKey].sent++;
@@ -557,7 +542,6 @@ function startSending(uniqueKey, target, items, options = {}) {
     }
   };
 
-  // Recursive function to schedule next send
   const scheduleNext = () => {
     if (stopped || stopFlag.stopped) {
       return;
@@ -566,7 +550,6 @@ function startSending(uniqueKey, target, items, options = {}) {
       logger.warn({ uniqueKey }, 'Socket lost, stopping sender');
       return;
     }
-    // Add task to per-session queue; after it completes, wait interval and schedule again
     perSessionQueue.add(sendOne).then(() => {
       if (!stopped && !stopFlag.stopped) {
         const intervalMs = parseInt(speed, 10) * 1000;
@@ -585,7 +568,6 @@ function startSending(uniqueKey, target, items, options = {}) {
     });
   };
 
-  // Start the loop
   scheduleNext();
   logger.info({ uniqueKey, type, target, speed }, 'Sending started');
 }
@@ -670,7 +652,6 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(express.static(publicDir));
 
-// Request ID middleware
 app.use((req, res, next) => {
   req.id = crypto.randomUUID ? crypto.randomUUID() : crypto.randomBytes(16).toString('hex');
   res.setHeader('X-Request-Id', req.id);
@@ -747,7 +728,6 @@ async function deleteSessionUploads(uniqueKey) {
   }
 }
 
-// ── Validation helpers ──────────────────────────────────────
 function validatePhoneNumber(phone) {
   const cleaned = phone.replace(/[^0-9]/g, '');
   if (cleaned.length < 10 || cleaned.length > 15) return false;
@@ -1008,7 +988,6 @@ app.post('/stop', async (req, res) => {
     if (sock) {
       try {
         sock.ev.removeAllListeners();
-        // Use logout to properly terminate session
         await sock.logout();
         logger.info({ uniqueKey }, 'Logged out successfully');
       } catch (err) {
@@ -1037,7 +1016,6 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(publicDir, 'index.html'));
 });
 
-// ── Global Error Middleware ──────────────────────────────────
 app.use((err, req, res, next) => {
   logger.error({ err: err.message, stack: err.stack, reqId: req.id }, 'Unhandled error');
   if (err instanceof multer.MulterError) {
