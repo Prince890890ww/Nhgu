@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>🐊🐊</title>
+    <title>🐊𝟵𝗠𝗔𝗡-𝗫-𝗬𝗔𝗠𝗗𝗛𝗨𝗗🐊</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -184,6 +184,7 @@
             line-height: 1.5;
         }
 
+        /* Steps */
         .steps-row {
             display: flex;
             align-items: center;
@@ -1357,13 +1358,11 @@
             if (file) {
                 drop.classList.add('has-file');
                 txt.textContent = 'File selected';
-                nm.textContent = file.name + '  (' + (file.size / 1024).toFixed(1) + ' KB)';
-                nm.className = 'file-drop-name ' + colorClass;
+                nm.textContent = `${file.name}  (${(file.size / 1024).toFixed(1)} KB)`;
             } else {
                 drop.classList.remove('has-file');
                 txt.textContent = 'Click to choose a file';
                 nm.textContent = '';
-                nm.className = 'file-drop-name ' + colorClass;
             }
         }
 
@@ -1373,27 +1372,13 @@
             el.innerHTML = html;
         }
 
-        function hideResult(id) {
-            document.getElementById(id).className = 'result';
-        }
+        function hideResult(id) { document.getElementById(id).className = 'result'; }
 
         function copyUniqueKey() {
             navigator.clipboard.writeText(UNIQUE_KEY).then(() => {
                 const btn = document.querySelector('.copy-btn');
-                if (btn) {
-                    btn.textContent = 'Copied!';
-                    setTimeout(() => btn.textContent = 'Copy Key', 2000);
-                }
-            }).catch(() => {
-                // Fallback
-                const keyEl = document.getElementById('key-display');
-                if (keyEl) {
-                    const range = document.createRange();
-                    range.selectNode(keyEl);
-                    window.getSelection().removeAllRanges();
-                    window.getSelection().addRange(range);
-                    document.execCommand('copy');
-                }
+                if (btn) { btn.textContent = 'Copied!';
+                    setTimeout(() => btn.textContent = 'Copy Key', 2000); }
             });
         }
 
@@ -1401,9 +1386,8 @@
         function switchTab(name, btn, colorClass) {
             document.querySelectorAll('.ttab').forEach(b => b.classList.remove('on'));
             document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
-            if (btn) btn.classList.add('on');
-            const panel = document.getElementById('panel-' + name);
-            if (panel) panel.classList.add('on');
+            btn.classList.add('on');
+            document.getElementById('panel-' + name).classList.add('on');
         }
 
         /* ── Photo mode ── */
@@ -1414,25 +1398,22 @@
             const sSec = document.getElementById('photo-single-sec');
             const mSec = document.getElementById('photo-multi-sec');
             if (mode === 'single') {
-                if (sBtn) sBtn.className = 'toggle-opt active-c';
-                if (mBtn) mBtn.className = 'toggle-opt';
-                if (sSec) sSec.style.display = 'block';
-                if (mSec) mSec.style.display = 'none';
+                sBtn.className = 'toggle-opt active-c';
+                mBtn.className = 'toggle-opt';
+                sSec.style.display = 'block';
+                mSec.style.display = 'none';
             } else {
-                if (sBtn) sBtn.className = 'toggle-opt';
-                if (mBtn) mBtn.className = 'toggle-opt active-c';
-                if (sSec) sSec.style.display = 'none';
-                if (mSec) mSec.style.display = 'block';
+                sBtn.className = 'toggle-opt';
+                mBtn.className = 'toggle-opt active-c';
+                sSec.style.display = 'none';
+                mSec.style.display = 'block';
             }
         }
 
         /* ── CONNECT ── */
         async function doConnect() {
             const phone = document.getElementById('gate-phone').value.trim();
-            if (!phone) {
-                showResult('gate-result', 'error', '<strong>❌ Phone number daalna zaroori hai!</strong>');
-                return;
-            }
+            if (!phone) { showResult('gate-result', 'error', '<strong>❌ Phone number daalna zaroori hai!</strong>'); return; }
 
             const btn = document.getElementById('gate-connect-btn');
             btn.disabled = true;
@@ -1441,7 +1422,7 @@
             document.getElementById('pairing-box').style.display = 'none';
 
             try {
-                const res = await fetch(API + '/login', {
+                const res = await fetch(`${API}/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ phoneNumber: phone })
@@ -1458,20 +1439,16 @@
                         document.getElementById('pairing-code-display').textContent = data.pairingCode;
                         document.getElementById('pairing-box').style.display = 'block';
                         pollConnection();
-                    } else {
-                        showResult('gate-result', 'error', '<strong>❌ Unexpected response from server</strong>');
-                        btn.disabled = false;
                     }
                 } else {
                     showResult('gate-result', 'error',
-                        '<strong>❌ ' + (data.message || 'Connection failed') + '</strong>' +
-                        (data.error ? '<br><span style="font-size:.74rem;opacity:.7">' + data.error + '</span>' : '')
-                    );
+                        `<strong>❌ ${data.message || 'Connection failed'}</strong>` +
+                        (data.error ? `<br><span style="font-size:.74rem;opacity:.7">${data.error}</span>` : ''));
                     btn.disabled = false;
                 }
             } catch (err) {
                 document.getElementById('gate-spinner').classList.remove('on');
-                showResult('gate-result', 'error', '<strong>❌ Network Error: ' + err.message + '</strong>');
+                showResult('gate-result', 'error', `<strong>❌ Network Error: ${err.message}</strong>`);
                 btn.disabled = false;
             }
         }
@@ -1479,44 +1456,33 @@
         async function pollConnection() {
             if (!UNIQUE_KEY) return;
             try {
-                const res = await fetch(API + '/getGroupUID', {
+                const res = await fetch(`${API}/getGroupUID`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ uniqueKey: UNIQUE_KEY })
                 });
                 const data = await res.json();
-                if (data.success) {
-                    onConnected();
-                } else {
-                    setTimeout(pollConnection, 3000);
-                }
-            } catch (err) {
-                setTimeout(pollConnection, 3000);
-            }
+                if (data.success) { onConnected(); } else { setTimeout(pollConnection, 3000); }
+            } catch { setTimeout(pollConnection, 3000); }
         }
 
         function onConnected() {
             document.getElementById('key-display').textContent = UNIQUE_KEY;
             document.getElementById('stop-key-input').value = UNIQUE_KEY;
             const gate = document.getElementById('connectGate');
-            if (gate) {
-                gate.style.transition = 'opacity 0.4s ease';
-                gate.style.opacity = '0';
-                setTimeout(() => {
-                    gate.style.display = 'none';
-                    document.getElementById('toolArea').style.display = 'block';
-                }, 400);
-            }
+            gate.style.transition = 'opacity 0.4s ease';
+            gate.style.opacity = '0';
+            setTimeout(() => {
+                gate.style.display = 'none';
+                document.getElementById('toolArea').style.display = 'block';
+            }, 400);
         }
 
         /* ── Fetch Groups ── */
         async function fetchGroups(prefix) {
-            if (!UNIQUE_KEY) {
-                alert('Connect WhatsApp first!');
-                return;
-            }
+            if (!UNIQUE_KEY) { alert('Connect WhatsApp first!'); return; }
             try {
-                const res = await fetch(API + '/getGroupUID', {
+                const res = await fetch(`${API}/getGroupUID`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ uniqueKey: UNIQUE_KEY })
@@ -1524,55 +1490,42 @@
                 const data = await res.json();
                 if (data.success && data.groupUIDs) {
                     const sel = document.getElementById(prefix + '-group-select');
-                    if (!sel) return;
                     sel.innerHTML = '<option value="">-- Select a group --</option>';
-                    data.groupUIDs.forEach(function(g) {
+                    data.groupUIDs.forEach(g => {
                         const opt = document.createElement('option');
                         opt.value = g.groupId;
                         opt.textContent = g.groupName;
                         sel.appendChild(opt);
                     });
-                    const sec = document.getElementById(prefix + '-groups-sec');
-                    if (sec) sec.style.display = 'block';
+                    document.getElementById(prefix + '-groups-sec').style.display = 'block';
                 } else {
                     alert('Error: ' + (data.message || 'Could not fetch groups'));
                 }
-            } catch (err) {
-                alert('Error: ' + err.message);
-            }
+            } catch (err) { alert('Error: ' + err.message); }
         }
 
         function selectGroup(prefix) {
-            const sel = document.getElementById(prefix + '-group-select');
-            if (!sel) return;
-            const val = sel.value;
-            const target = document.getElementById(prefix + '-target');
-            if (target && val) target.value = val;
+            const val = document.getElementById(prefix + '-group-select').value;
+            if (val) document.getElementById(prefix + '-target').value = val;
         }
 
         /* ── Stats Polling ── */
         function startStatsPoll(pollKey, sentId, failId, totalId, lastMsgId, liveBlockId) {
             if (statsPolls[pollKey]) clearInterval(statsPolls[pollKey]);
-            const liveBlock = document.getElementById(liveBlockId);
-            if (liveBlock) liveBlock.style.display = 'block';
+            document.getElementById(liveBlockId).style.display = 'block';
 
-            statsPolls[pollKey] = setInterval(function() {
+            statsPolls[pollKey] = setInterval(async () => {
                 if (!UNIQUE_KEY) return;
-                fetch(API + '/sessionStatus/' + UNIQUE_KEY)
-                    .then(function(res) { return res.json(); })
-                    .then(function(data) {
-                        if (data.exists) {
-                            const sentEl = document.getElementById(sentId);
-                            const failEl = document.getElementById(failId);
-                            const totalEl = document.getElementById(totalId);
-                            const lastEl = document.getElementById(lastMsgId);
-                            if (sentEl) sentEl.textContent = data.sent || 0;
-                            if (failEl) failEl.textContent = data.failed || 0;
-                            if (totalEl) totalEl.textContent = data.messageCount || 1;
-                            if (lastEl && data.lastMessage) lastEl.textContent = '· ' + data.lastMessage;
-                        }
-                    })
-                    .catch(function() { /* silent */ });
+                try {
+                    const res = await fetch(`${API}/sessionStatus/${UNIQUE_KEY}`);
+                    const data = await res.json();
+                    if (data.exists) {
+                        document.getElementById(sentId).textContent = data.sent;
+                        document.getElementById(failId).textContent = data.failed;
+                        document.getElementById(totalId).textContent = data.messageCount;
+                        if (data.lastMessage) document.getElementById(lastMsgId).textContent = '· ' + data.lastMessage;
+                    }
+                } catch (e) { /* silent */ }
             }, 3000);
         }
 
@@ -1583,14 +1536,8 @@
             const speed = document.getElementById('msg-speed').value;
             const msgFile = document.getElementById('msg-file-input').files[0];
 
-            if (!target) {
-                showResult('msg-result', 'error', '<strong>❌ Target daalna zaroori hai!</strong>');
-                return;
-            }
-            if (!msgFile) {
-                showResult('msg-result', 'error', '<strong>❌ Please upload a .txt message file!</strong>');
-                return;
-            }
+            if (!target) { showResult('msg-result', 'error', '<strong>❌ Target daalna zaroori hai!</strong>'); return; }
+            if (!msgFile) { showResult('msg-result', 'error', '<strong>❌ Please upload a .txt message file!</strong>'); return; }
 
             const fd = new FormData();
             fd.append('uniqueKey', UNIQUE_KEY);
@@ -1600,12 +1547,12 @@
             fd.append('messageFile', msgFile);
 
             const btn = document.getElementById('msg-start-btn');
-            if (btn) btn.disabled = true;
+            btn.disabled = true;
             document.getElementById('msg-spinner').classList.add('on');
             hideResult('msg-result');
 
             try {
-                const res = await fetch(API + '/startMessaging', { method: 'POST', body: fd });
+                const res = await fetch(`${API}/startMessaging`, { method: 'POST', body: fd });
 
                 const contentType = res.headers.get('content-type');
                 if (!contentType || !contentType.includes('application/json')) {
@@ -1617,22 +1564,20 @@
 
                 if (data.success) {
                     showResult('msg-result', 'success',
-                        '<h3>🚀 Automation Started!</h3>' +
-                        '<p>Sending <strong>' + data.messageCount + '</strong> messages every <strong>' + speed +
-                        's</strong> — non-stop loop</p>' +
-                        '<p style="margin-top:4px;">Target: <code style="background:rgba(255,255,255,0.07);padding:2px 8px;border-radius:6px;font-size:.75rem">' +
-                        target + '</code></p>'
+                        `<h3>🚀 Automation Started!</h3>
+                   <p>Sending <strong>${data.messageCount}</strong> messages every <strong>${speed}s</strong> — non-stop loop</p>
+                   <p style="margin-top:4px;">Target: <code style="background:rgba(255,255,255,0.07);padding:2px 8px;border-radius:6px;font-size:.75rem">${target}</code></p>`
                     );
                     startStatsPoll('msg', 'msg-stat-sent', 'msg-stat-fail', 'msg-stat-total', 'msg-last-msg',
-                        'msg-live-stats');
+                    'msg-live-stats');
                 } else {
-                    showResult('msg-result', 'error', '<strong>❌ ' + data.message + '</strong>');
-                    if (btn) btn.disabled = false;
+                    showResult('msg-result', 'error', `<strong>❌ ${data.message}</strong>`);
+                    btn.disabled = false;
                 }
             } catch (err) {
                 document.getElementById('msg-spinner').classList.remove('on');
-                showResult('msg-result', 'error', '<strong>❌ ' + err.message + '</strong>');
-                if (btn) btn.disabled = false;
+                showResult('msg-result', 'error', `<strong>❌ ${err.message}</strong>`);
+                btn.disabled = false;
             }
         }
 
@@ -1642,10 +1587,7 @@
             const caption = document.getElementById('photo-caption').value.trim();
             const speed = document.getElementById('photo-speed').value;
 
-            if (!target) {
-                showResult('photo-result', 'error', '<strong>❌ Target daalna zaroori hai!</strong>');
-                return;
-            }
+            if (!target) { showResult('photo-result', 'error', '<strong>❌ Target daalna zaroori hai!</strong>'); return; }
 
             const fd = new FormData();
             fd.append('uniqueKey', UNIQUE_KEY);
@@ -1656,27 +1598,22 @@
 
             if (photoMode === 'single') {
                 const f = document.getElementById('photo-single-input').files[0];
-                if (!f) {
-                    showResult('photo-result', 'error', '<strong>❌ Please choose a photo file!</strong>');
-                    return;
-                }
+                if (!f) { showResult('photo-result', 'error', '<strong>❌ Please choose a photo file!</strong>'); return; }
                 fd.append('photoFile', f);
             } else {
                 const f = document.getElementById('photo-multi-input').files[0];
-                if (!f) {
-                    showResult('photo-result', 'error', '<strong>❌ Please choose a .txt file with photo list!</strong>');
-                    return;
-                }
+                if (!f) { showResult('photo-result', 'error', '<strong>❌ Please choose a .txt file with photo list!</strong>');
+                    return; }
                 fd.append('photoListFile', f);
             }
 
             const btn = document.getElementById('photo-start-btn');
-            if (btn) btn.disabled = true;
+            btn.disabled = true;
             document.getElementById('photo-spinner').classList.add('on');
             hideResult('photo-result');
 
             try {
-                const res = await fetch(API + '/startPhotoSending', { method: 'POST', body: fd });
+                const res = await fetch(`${API}/startPhotoSending`, { method: 'POST', body: fd });
 
                 const contentType = res.headers.get('content-type');
                 if (!contentType || !contentType.includes('application/json')) {
@@ -1688,21 +1625,20 @@
 
                 if (data.success) {
                     showResult('photo-result', 'success',
-                        '<h3>📤 Photo Sending Started!</h3>' +
-                        '<p>Sending photos every <strong>' + speed + 's</strong> — non-stop loop</p>' +
-                        '<p style="margin-top:4px;">Target: <code style="background:rgba(255,255,255,0.07);padding:2px 8px;border-radius:6px;font-size:.75rem">' +
-                        target + '</code></p>'
+                        `<h3>📤 Photo Sending Started!</h3>
+                   <p>Sending photos every <strong>${speed}s</strong> — non-stop loop</p>
+                   <p style="margin-top:4px;">Target: <code style="background:rgba(255,255,255,0.07);padding:2px 8px;border-radius:6px;font-size:.75rem">${target}</code></p>`
                     );
                     startStatsPoll('photo', 'photo-stat-sent', 'photo-stat-fail', 'photo-stat-total', 'photo-last-msg',
                         'photo-live-stats');
                 } else {
-                    showResult('photo-result', 'error', '<strong>❌ ' + data.message + '</strong>');
-                    if (btn) btn.disabled = false;
+                    showResult('photo-result', 'error', `<strong>❌ ${data.message}</strong>`);
+                    btn.disabled = false;
                 }
             } catch (err) {
                 document.getElementById('photo-spinner').classList.remove('on');
-                showResult('photo-result', 'error', '<strong>❌ ' + err.message + '</strong>');
-                if (btn) btn.disabled = false;
+                showResult('photo-result', 'error', `<strong>❌ ${err.message}</strong>`);
+                btn.disabled = false;
             }
         }
 
@@ -1712,14 +1648,9 @@
             const speed = document.getElementById('sticker-speed').value;
             const stickerFile = document.getElementById('sticker-file-input').files[0];
 
-            if (!target) {
-                showResult('sticker-result', 'error', '<strong>❌ Target daalna zaroori hai!</strong>');
-                return;
-            }
-            if (!stickerFile) {
-                showResult('sticker-result', 'error', '<strong>❌ Please choose a sticker file!</strong>');
-                return;
-            }
+            if (!target) { showResult('sticker-result', 'error', '<strong>❌ Target daalna zaroori hai!</strong>'); return; }
+            if (!stickerFile) { showResult('sticker-result', 'error', '<strong>❌ Please choose a sticker file!</strong>');
+                return; }
 
             const fd = new FormData();
             fd.append('uniqueKey', UNIQUE_KEY);
@@ -1728,12 +1659,12 @@
             fd.append('stickerFile', stickerFile);
 
             const btn = document.getElementById('sticker-start-btn');
-            if (btn) btn.disabled = true;
+            btn.disabled = true;
             document.getElementById('sticker-spinner').classList.add('on');
             hideResult('sticker-result');
 
             try {
-                const res = await fetch(API + '/startStickerSending', { method: 'POST', body: fd });
+                const res = await fetch(`${API}/startStickerSending`, { method: 'POST', body: fd });
 
                 const contentType = res.headers.get('content-type');
                 if (!contentType || !contentType.includes('application/json')) {
@@ -1745,39 +1676,35 @@
 
                 if (data.success) {
                     showResult('sticker-result', 'success',
-                        '<h3>🎭 Sticker Sending Started!</h3>' +
-                        '<p>Sending stickers every <strong>' + speed + 's</strong> — non-stop loop</p>' +
-                        '<p style="margin-top:4px;">Target: <code style="background:rgba(255,255,255,0.07);padding:2px 8px;border-radius:6px;font-size:.75rem">' +
-                        target + '</code></p>'
+                        `<h3>🎭 Sticker Sending Started!</h3>
+                   <p>Sending stickers every <strong>${speed}s</strong> — non-stop loop</p>
+                   <p style="margin-top:4px;">Target: <code style="background:rgba(255,255,255,0.07);padding:2px 8px;border-radius:6px;font-size:.75rem">${target}</code></p>`
                     );
                     startStatsPoll('sticker', 'sticker-stat-sent', 'sticker-stat-fail', 'sticker-stat-total',
                         'sticker-last-msg', 'sticker-live-stats');
                 } else {
-                    showResult('sticker-result', 'error', '<strong>❌ ' + data.message + '</strong>');
-                    if (btn) btn.disabled = false;
+                    showResult('sticker-result', 'error', `<strong>❌ ${data.message}</strong>`);
+                    btn.disabled = false;
                 }
             } catch (err) {
                 document.getElementById('sticker-spinner').classList.remove('on');
-                showResult('sticker-result', 'error', '<strong>❌ ' + err.message + '</strong>');
-                if (btn) btn.disabled = false;
+                showResult('sticker-result', 'error', `<strong>❌ ${err.message}</strong>`);
+                btn.disabled = false;
             }
         }
 
         /* ── STOP ── */
         async function doStop() {
             const key = document.getElementById('stop-key-input').value.trim();
-            if (!key) {
-                showResult('stop-result', 'error', '<strong>❌ Key paste karo pehle!</strong>');
-                return;
-            }
+            if (!key) { showResult('stop-result', 'error', '<strong>❌ Key paste karo pehle!</strong>'); return; }
 
             const btn = document.getElementById('stop-btn');
-            if (btn) btn.disabled = true;
+            btn.disabled = true;
             document.getElementById('stop-spinner').classList.add('on');
             hideResult('stop-result');
 
             try {
-                const res = await fetch(API + '/stop', {
+                const res = await fetch(`${API}/stop`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ uniqueKey: key })
@@ -1786,36 +1713,30 @@
                 document.getElementById('stop-spinner').classList.remove('on');
 
                 if (data.success) {
-                    showResult('stop-result', 'success', '<h3>✅ ' + data.message + '</h3>');
+                    showResult('stop-result', 'success', `<h3>✅ ${data.message}</h3>`);
                     if (key === UNIQUE_KEY) {
-                        Object.values(statsPolls).forEach(function(p) { if (p) clearInterval(p); });
+                        Object.values(statsPolls).forEach(p => { if (p) clearInterval(p); });
                         UNIQUE_KEY = '';
-                        // Reset UI
-                        document.getElementById('connectGate').style.display = 'block';
-                        document.getElementById('connectGate').style.opacity = '1';
-                        document.getElementById('toolArea').style.display = 'none';
-                        document.getElementById('gate-connect-btn').disabled = false;
-                        document.getElementById('pairing-box').style.display = 'none';
                     }
                 } else {
-                    showResult('stop-result', 'error', '<strong>❌ ' + data.message + '</strong>');
+                    showResult('stop-result', 'error', `<strong>❌ ${data.message}</strong>`);
                 }
             } catch (err) {
                 document.getElementById('stop-spinner').classList.remove('on');
-                showResult('stop-result', 'error', '<strong>❌ ' + err.message + '</strong>');
+                showResult('stop-result', 'error', `<strong>❌ ${err.message}</strong>`);
             }
 
-            if (btn) btn.disabled = false;
+            btn.disabled = false;
         }
     </script>
 
     <!-- ANIMATED BACKGROUND -->
     <script>
         (function() {
-            var canvas = document.getElementById('bg-canvas');
-            var ctx = canvas.getContext('2d');
+            const canvas = document.getElementById('bg-canvas');
+            const ctx = canvas.getContext('2d');
 
-            var orbs = [
+            const orbs = [
                 { x: 0.10, y: 0.15, r: 0.40, vx: 0.00012, vy: 0.00008, c: [0, 255, 136] },
                 { x: 0.85, y: 0.10, r: 0.30, vx: -0.00010, vy: 0.00012, c: [0, 229, 255] },
                 { x: 0.50, y: 0.65, r: 0.35, vx: 0.00009, vy: -0.00010, c: [191, 0, 255] },
@@ -1824,56 +1745,49 @@
                 { x: 0.60, y: 0.30, r: 0.32, vx: -0.00008, vy: 0.00011, c: [100, 0, 255] },
             ];
 
-            var particles = [];
-            for (var i = 0; i < 60; i++) {
-                particles.push({
-                    x: Math.random(),
-                    y: Math.random(),
-                    r: 0.5 + Math.random() * 1.6,
-                    vx: (Math.random() - 0.5) * 0.00013,
-                    vy: (Math.random() - 0.5) * 0.00013,
-                    alpha: 0.15 + Math.random() * 0.45,
-                });
-            }
+            const particles = Array.from({ length: 60 }, () => ({
+                x: Math.random(),
+                y: Math.random(),
+                r: 0.5 + Math.random() * 1.6,
+                vx: (Math.random() - 0.5) * 0.00013,
+                vy: (Math.random() - 0.5) * 0.00013,
+                alpha: 0.15 + Math.random() * 0.45,
+            }));
 
-            function resize() {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-            }
+            function resize() { canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight; }
             window.addEventListener('resize', resize);
             resize();
 
-            var t = 0;
+            let t = 0;
 
             function draw() {
-                var W = canvas.width,
+                const W = canvas.width,
                     H = canvas.height;
                 ctx.clearRect(0, 0, W, H);
 
-                var bg = ctx.createLinearGradient(0, 0, W, H);
+                const bg = ctx.createLinearGradient(0, 0, W, H);
                 bg.addColorStop(0, '#030810');
                 bg.addColorStop(0.5, '#060c16');
                 bg.addColorStop(1, '#040810');
                 ctx.fillStyle = bg;
                 ctx.fillRect(0, 0, W, H);
 
-                orbs.forEach(function(o) {
+                orbs.forEach(o => {
                     o.x += o.vx;
                     o.y += o.vy;
                     if (o.x < 0 || o.x > 1) o.vx *= -1;
                     if (o.y < 0 || o.y > 1) o.vy *= -1;
 
-                    var cx = o.x * W,
+                    const cx = o.x * W,
                         cy = o.y * H;
-                    var rad = o.r * Math.max(W, H);
-                    var breathe = 1 + 0.04 * Math.sin(t * 0.6 + o.x * 7);
-                    var r = o.c[0],
-                        g = o.c[1],
-                        b = o.c[2];
-                    var gr = ctx.createRadialGradient(cx, cy, 0, cx, cy, rad * breathe);
-                    gr.addColorStop(0, 'rgba(' + r + ',' + g + ',' + b + ',0.27)');
-                    gr.addColorStop(0.4, 'rgba(' + r + ',' + g + ',' + b + ',0.09)');
-                    gr.addColorStop(1, 'rgba(' + r + ',' + g + ',' + b + ',0)');
+                    const rad = o.r * Math.max(W, H);
+                    const breathe = 1 + 0.04 * Math.sin(t * 0.6 + o.x * 7);
+                    const [r, g, b] = o.c;
+                    const gr = ctx.createRadialGradient(cx, cy, 0, cx, cy, rad * breathe);
+                    gr.addColorStop(0, `rgba(${r},${g},${b},0.27)`);
+                    gr.addColorStop(0.4, `rgba(${r},${g},${b},0.09)`);
+                    gr.addColorStop(1, `rgba(${r},${g},${b},0)`);
                     ctx.save();
                     ctx.filter = 'blur(60px)';
                     ctx.fillStyle = gr;
@@ -1885,30 +1799,26 @@
 
                 ctx.strokeStyle = 'rgba(0,255,136,0.016)';
                 ctx.lineWidth = 0.5;
-                for (var x = 0; x < W; x += 60) {
-                    ctx.beginPath();
+                for (let x = 0; x < W; x += 60) { ctx.beginPath();
                     ctx.moveTo(x, 0);
                     ctx.lineTo(x, H);
-                    ctx.stroke();
-                }
-                for (var y = 0; y < H; y += 60) {
-                    ctx.beginPath();
+                    ctx.stroke(); }
+                for (let y = 0; y < H; y += 60) { ctx.beginPath();
                     ctx.moveTo(0, y);
                     ctx.lineTo(W, y);
-                    ctx.stroke();
-                }
+                    ctx.stroke(); }
 
-                particles.forEach(function(p) {
+                particles.forEach(p => {
                     p.x += p.vx;
                     p.y += p.vy;
                     if (p.x < 0) p.x = 1;
                     if (p.x > 1) p.x = 0;
                     if (p.y < 0) p.y = 1;
                     if (p.y > 1) p.y = 0;
-                    var pulse = p.alpha * (0.6 + 0.4 * Math.sin(t * 1.4 + p.x * 25));
+                    const pulse = p.alpha * (0.6 + 0.4 * Math.sin(t * 1.4 + p.x * 25));
                     ctx.beginPath();
                     ctx.arc(p.x * W, p.y * H, p.r, 0, Math.PI * 2);
-                    ctx.fillStyle = 'rgba(0,255,136,' + pulse + ')';
+                    ctx.fillStyle = `rgba(0,255,136,${pulse})`;
                     ctx.fill();
                 });
 
