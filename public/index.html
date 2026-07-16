@@ -1,1 +1,1924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🐊𝟵𝗠𝗔𝗡-𝗫-𝗬𝗔𝗠𝗗𝗛𝗨𝗗🐊</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        :root {
+            --neon-green: #00ff88;
+            --neon-cyan: #00e5ff;
+            --neon-purple: #bf00ff;
+            --neon-red: #ff2244;
+            --bg-dark: #04060d;
+            --bg-mid: #060c16;
+            --text: rgba(255, 255, 255, 0.92);
+            --subtext: rgba(255, 255, 255, 0.38);
+        }
+
+        html,
+        body {
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            background: var(--bg-dark);
+            overflow-x: hidden;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 80px;
+        }
+
+        #bg-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            background: repeating-linear-gradient(0deg, transparent, transparent 2px,
+                    rgba(0, 255, 136, 0.012) 2px, rgba(0, 255, 136, 0.012) 4px);
+        }
+
+        /* ── TOPBAR ── */
+        .topbar {
+            position: relative;
+            z-index: 3;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px 28px;
+            margin-bottom: 28px;
+            background: rgba(0, 255, 136, 0.03);
+            border-bottom: 1px solid rgba(0, 255, 136, 0.1);
+            backdrop-filter: blur(20px);
+            gap: 30px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+        }
+
+        .brand-name {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.2rem;
+            font-weight: 900;
+            letter-spacing: 12px;
+            color: var(--neon-green);
+            text-shadow: 0 0 40px rgba(0, 255, 136, 0.7), 0 0 80px rgba(0, 255, 136, 0.3);
+            text-align: center;
+        }
+
+        .online-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 4px;
+            border: 1px solid rgba(0, 255, 136, 0.28);
+            background: rgba(0, 255, 136, 0.06);
+            font-family: 'Orbitron', monospace;
+            font-size: 0.6rem;
+            font-weight: 700;
+            color: var(--neon-green);
+            letter-spacing: 2px;
+            flex-shrink: 0;
+        }
+
+        .online-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--neon-green);
+            box-shadow: 0 0 8px var(--neon-green);
+            animation: blink 1.5s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%,
+            100% {
+                opacity: 1
+            }
+            50% {
+                opacity: .2
+            }
+        }
+
+        /* ── PAGE ── */
+        .page {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 560px;
+            padding: 0 16px;
+        }
+
+        /* ── CARDS ── */
+        .connect-card {
+            background: rgba(0, 255, 136, 0.03);
+            border: 1px solid rgba(0, 255, 136, 0.14);
+            border-radius: 20px;
+            padding: 28px;
+            backdrop-filter: blur(24px);
+            box-shadow: 0 0 50px rgba(0, 255, 136, 0.05), 0 8px 32px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(0, 255, 136, 0.08);
+            margin-bottom: 18px;
+        }
+
+        .connect-hd {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(0, 255, 136, 0.08);
+        }
+
+        .connect-ico {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+            background: rgba(0, 255, 136, 0.08);
+            border: 1px solid rgba(0, 255, 136, 0.22);
+        }
+
+        .connect-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 0.95rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+        }
+
+        .connect-sub {
+            font-size: 0.73rem;
+            color: var(--subtext);
+            margin-top: 4px;
+            line-height: 1.5;
+        }
+
+        .steps-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 10px;
+            margin-bottom: 20px;
+            background: rgba(0, 255, 136, 0.03);
+            border: 1px solid rgba(0, 255, 136, 0.09);
+            border-radius: 12px;
+        }
+
+        .step-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            flex: 1;
+        }
+
+        .step-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid rgba(0, 255, 136, 0.22);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+        }
+
+        .step-label {
+            font-size: 0.58rem;
+            color: var(--subtext);
+            text-align: center;
+            line-height: 1.4;
+        }
+        .step-arrow {
+            color: rgba(0, 255, 136, 0.3);
+            font-size: 1rem;
+            margin-bottom: 14px;
+        }
+
+        /* ── TOOL AREA ── */
+        #toolArea {
+            display: none;
+        }
+
+        .key-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px 16px;
+            margin-bottom: 16px;
+            background: rgba(0, 255, 136, 0.04);
+            border: 1px solid rgba(0, 255, 136, 0.15);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .key-label {
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--subtext);
+            white-space: nowrap;
+        }
+        .key-val {
+            flex: 1;
+            font-family: monospace;
+            font-size: 0.74rem;
+            word-break: break-all;
+            color: var(--neon-green);
+            text-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
+        }
+
+        .copy-btn {
+            background: rgba(0, 255, 136, 0.08);
+            border: 1px solid rgba(0, 255, 136, 0.25);
+            border-radius: 6px;
+            color: var(--neon-green);
+            font-size: 0.68rem;
+            font-weight: 600;
+            padding: 5px 12px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: rgba(0, 255, 136, 0.18);
+        }
+
+        /* ── TABS ── */
+        .tool-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .ttab {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 18px 10px;
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.02);
+            color: var(--subtext);
+            font-size: 0.62rem;
+            font-weight: 700;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+
+        .ttab .tab-icon {
+            font-size: 1.6rem;
+            line-height: 1;
+        }
+
+        .ttab:hover {
+            border-color: rgba(255, 255, 255, 0.16);
+            color: var(--text);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .ttab.tg.on {
+            border-color: var(--neon-green);
+            color: var(--neon-green);
+            background: rgba(0, 255, 136, 0.07);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.14);
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+        .ttab.tc.on {
+            border-color: var(--neon-cyan);
+            color: var(--neon-cyan);
+            background: rgba(0, 229, 255, 0.07);
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.14);
+            text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+        }
+        .ttab.tp.on {
+            border-color: var(--neon-purple);
+            color: var(--neon-purple);
+            background: rgba(191, 0, 255, 0.07);
+            box-shadow: 0 0 20px rgba(191, 0, 255, 0.14);
+            text-shadow: 0 0 10px rgba(191, 0, 255, 0.5);
+        }
+        .ttab.tr.on {
+            border-color: var(--neon-red);
+            color: var(--neon-red);
+            background: rgba(255, 34, 68, 0.07);
+            box-shadow: 0 0 20px rgba(255, 34, 68, 0.14);
+            text-shadow: 0 0 10px rgba(255, 34, 68, 0.5);
+        }
+
+        /* ── PANELS ── */
+        .panel {
+            display: none;
+            border-radius: 20px;
+            padding: 26px;
+            margin-bottom: 14px;
+            backdrop-filter: blur(22px);
+            animation: fadeUp 0.3s ease;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+        }
+
+        .panel.on {
+            display: block;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(12px)
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .panel-green {
+            background: rgba(0, 255, 136, 0.025);
+            border: 1px solid rgba(0, 255, 136, 0.13);
+        }
+        .panel-cyan {
+            background: rgba(0, 229, 255, 0.025);
+            border: 1px solid rgba(0, 229, 255, 0.13);
+        }
+        .panel-purple {
+            background: rgba(191, 0, 255, 0.025);
+            border: 1px solid rgba(191, 0, 255, 0.13);
+        }
+        .panel-red {
+            background: rgba(255, 34, 68, 0.025);
+            border: 1px solid rgba(255, 34, 68, 0.13);
+        }
+
+        .panel-hd {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 22px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.055);
+        }
+
+        .panel-ico {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .panel-ico.ig {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid rgba(0, 255, 136, 0.22);
+            box-shadow: 0 0 16px rgba(0, 255, 136, 0.1);
+        }
+        .panel-ico.ic {
+            background: rgba(0, 229, 255, 0.1);
+            border: 1px solid rgba(0, 229, 255, 0.22);
+            box-shadow: 0 0 16px rgba(0, 229, 255, 0.1);
+        }
+        .panel-ico.ip {
+            background: rgba(191, 0, 255, 0.1);
+            border: 1px solid rgba(191, 0, 255, 0.22);
+            box-shadow: 0 0 16px rgba(191, 0, 255, 0.1);
+        }
+        .panel-ico.ir {
+            background: rgba(255, 34, 68, 0.1);
+            border: 1px solid rgba(255, 34, 68, 0.22);
+            box-shadow: 0 0 16px rgba(255, 34, 68, 0.1);
+        }
+
+        .panel-hd-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 0.95rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+        }
+        .panel-hd-sub {
+            font-size: 0.72rem;
+            color: var(--subtext);
+            margin-top: 3px;
+        }
+
+        .col-green {
+            color: var(--neon-green);
+            text-shadow: 0 0 12px rgba(0, 255, 136, 0.45);
+        }
+        .col-cyan {
+            color: var(--neon-cyan);
+            text-shadow: 0 0 12px rgba(0, 229, 255, 0.45);
+        }
+        .col-purple {
+            color: var(--neon-purple);
+            text-shadow: 0 0 12px rgba(191, 0, 255, 0.45);
+        }
+        .col-red {
+            color: var(--neon-red);
+            text-shadow: 0 0 12px rgba(255, 34, 68, 0.45);
+        }
+
+        /* ── FORM ── */
+        .fg {
+            margin-bottom: 17px;
+        }
+
+        .flbl {
+            display: block;
+            font-size: 0.64rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--subtext);
+            margin-bottom: 7px;
+        }
+
+        .flbl .opt {
+            font-weight: 400;
+            text-transform: none;
+            letter-spacing: 0;
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 0.7rem;
+        }
+
+        .finput {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.09);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 0.9rem;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: all 0.22s;
+        }
+
+        .finput::placeholder {
+            color: rgba(255, 255, 255, 0.18);
+        }
+
+        .finput:focus {
+            border-color: rgba(0, 255, 136, 0.45);
+            background: rgba(0, 255, 136, 0.05);
+            box-shadow: 0 0 0 3px rgba(0, 255, 136, 0.09);
+        }
+        .finput.fc:focus {
+            border-color: rgba(0, 229, 255, 0.45);
+            background: rgba(0, 229, 255, 0.05);
+            box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.09);
+        }
+        .finput.fp:focus {
+            border-color: rgba(191, 0, 255, 0.45);
+            background: rgba(191, 0, 255, 0.05);
+            box-shadow: 0 0 0 3px rgba(191, 0, 255, 0.09);
+        }
+
+        select.finput option {
+            background: #080c18;
+        }
+
+        /* ── FILE DROP ── */
+        .file-drop {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 7px;
+            padding: 20px 16px;
+            background: rgba(255, 255, 255, 0.025);
+            border: 1.5px dashed rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+
+        .file-drop:hover,
+        .file-drop.has-file {
+            border-color: rgba(0, 255, 136, 0.38);
+            background: rgba(0, 255, 136, 0.05);
+        }
+        .file-drop.cyan-drop:hover,
+        .file-drop.cyan-drop.has-file {
+            border-color: rgba(0, 229, 255, 0.38);
+            background: rgba(0, 229, 255, 0.05);
+        }
+        .file-drop.purple-drop:hover,
+        .file-drop.purple-drop.has-file {
+            border-color: rgba(191, 0, 255, 0.38);
+            background: rgba(191, 0, 255, 0.05);
+        }
+
+        .file-drop-icon {
+            font-size: 26px;
+        }
+        .file-drop-txt {
+            font-size: 0.8rem;
+            color: var(--subtext);
+        }
+        .file-drop-name {
+            font-size: 0.74rem;
+            font-weight: 500;
+        }
+        .file-drop-name.ng {
+            color: var(--neon-green);
+        }
+        .file-drop-name.nc {
+            color: var(--neon-cyan);
+        }
+        .file-drop-name.np {
+            color: var(--neon-purple);
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        /* ── TOGGLE ── */
+        .toggle-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .toggle-opt {
+            flex: 1;
+            padding: 10px 8px;
+            border: 1px solid rgba(255, 255, 255, 0.09);
+            border-radius: 9px;
+            background: rgba(255, 255, 255, 0.02);
+            color: var(--subtext);
+            font-size: 0.76rem;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.22s;
+            text-align: center;
+        }
+
+        .toggle-opt.active-c {
+            border-color: rgba(0, 229, 255, 0.5);
+            color: var(--neon-cyan);
+            background: rgba(0, 229, 255, 0.08);
+        }
+        .toggle-opt.active-p {
+            border-color: rgba(191, 0, 255, 0.5);
+            color: var(--neon-purple);
+            background: rgba(191, 0, 255, 0.08);
+        }
+
+        /* ── BUTTONS ── */
+        .btn {
+            width: 100%;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.84rem;
+            font-weight: 700;
+            font-family: 'Orbitron', monospace;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: all 0.25s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+        }
+
+        .btn-green {
+            background: transparent;
+            border: 1.5px solid var(--neon-green);
+            color: var(--neon-green);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.18);
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.6);
+        }
+        .btn-cyan {
+            background: transparent;
+            border: 1.5px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.18);
+            text-shadow: 0 0 10px rgba(0, 229, 255, 0.6);
+        }
+        .btn-purple {
+            background: transparent;
+            border: 1.5px solid var(--neon-purple);
+            color: var(--neon-purple);
+            box-shadow: 0 0 20px rgba(191, 0, 255, 0.18);
+            text-shadow: 0 0 10px rgba(191, 0, 255, 0.6);
+        }
+        .btn-red {
+            background: transparent;
+            border: 1.5px solid var(--neon-red);
+            color: var(--neon-red);
+            box-shadow: 0 0 20px rgba(255, 34, 68, 0.18);
+            text-shadow: 0 0 10px rgba(255, 34, 68, 0.6);
+        }
+
+        .btn-green:hover:not(:disabled) {
+            background: rgba(0, 255, 136, 0.1);
+            box-shadow: 0 0 32px rgba(0, 255, 136, 0.38);
+            transform: translateY(-1px);
+        }
+        .btn-cyan:hover:not(:disabled) {
+            background: rgba(0, 229, 255, 0.1);
+            box-shadow: 0 0 32px rgba(0, 229, 255, 0.38);
+            transform: translateY(-1px);
+        }
+        .btn-purple:hover:not(:disabled) {
+            background: rgba(191, 0, 255, 0.1);
+            box-shadow: 0 0 32px rgba(191, 0, 255, 0.38);
+            transform: translateY(-1px);
+        }
+        .btn-red:hover:not(:disabled) {
+            background: rgba(255, 34, 68, 0.1);
+            box-shadow: 0 0 32px rgba(255, 34, 68, 0.38);
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        .btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .btn-ghost-green {
+            background: transparent;
+            border: 1px solid rgba(0, 255, 136, 0.22);
+            color: var(--neon-green);
+            font-size: 0.72rem;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            padding: 9px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .btn-ghost-cyan {
+            background: transparent;
+            border: 1px solid rgba(0, 229, 255, 0.22);
+            color: var(--neon-cyan);
+            font-size: 0.72rem;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            padding: 9px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .btn-ghost-purple {
+            background: transparent;
+            border: 1px solid rgba(191, 0, 255, 0.22);
+            color: var(--neon-purple);
+            font-size: 0.72rem;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            padding: 9px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .btn-ghost-green:hover {
+            background: rgba(0, 255, 136, 0.08);
+            border-color: rgba(0, 255, 136, 0.4);
+        }
+        .btn-ghost-cyan:hover {
+            background: rgba(0, 229, 255, 0.08);
+            border-color: rgba(0, 229, 255, 0.4);
+        }
+        .btn-ghost-purple:hover {
+            background: rgba(191, 0, 255, 0.08);
+            border-color: rgba(191, 0, 255, 0.4);
+        }
+
+        /* ── SPINNER ── */
+        .spin-wrap {
+            display: none;
+            padding: 24px 0;
+            text-align: center;
+        }
+        .spin-wrap.on {
+            display: block;
+        }
+
+        .spin-ring {
+            display: inline-block;
+            width: 38px;
+            height: 38px;
+            border: 2px solid rgba(0, 255, 136, 0.1);
+            border-top-color: var(--neon-green);
+            border-radius: 50%;
+            animation: rotate 0.65s linear infinite;
+        }
+
+        .spin-ring.cyan {
+            border-color: rgba(0, 229, 255, 0.1);
+            border-top-color: var(--neon-cyan);
+        }
+        .spin-ring.purple {
+            border-color: rgba(191, 0, 255, 0.1);
+            border-top-color: var(--neon-purple);
+        }
+        .spin-ring.red {
+            border-color: rgba(255, 34, 68, 0.1);
+            border-top-color: var(--neon-red);
+        }
+
+        @keyframes rotate {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        @keyframes pglow {
+            0%,
+            100% {
+                border-color: rgba(0, 255, 136, 0.2);
+                box-shadow: none;
+            }
+            50% {
+                border-color: rgba(0, 255, 136, 0.65);
+                box-shadow: 0 0 28px rgba(0, 255, 136, 0.12);
+            }
+        }
+
+        .spin-txt {
+            margin-top: 10px;
+            font-size: 0.74rem;
+            color: var(--subtext);
+            letter-spacing: 1.5px;
+        }
+
+        /* ── RESULT ── */
+        .result {
+            display: none;
+            border-radius: 10px;
+            padding: 14px 16px;
+            font-size: 0.82rem;
+            line-height: 1.7;
+            margin-top: 12px;
+        }
+        .result.show {
+            display: block;
+        }
+
+        .result.success {
+            background: rgba(0, 255, 136, 0.07);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            color: #a0ffd0;
+        }
+        .result.error {
+            background: rgba(255, 34, 68, 0.07);
+            border: 1px solid rgba(255, 34, 68, 0.2);
+            color: #ffaab8;
+        }
+        .result.info {
+            background: rgba(0, 229, 255, 0.07);
+            border: 1px solid rgba(0, 229, 255, 0.2);
+            color: #a0eeff;
+        }
+
+        .result h3 {
+            font-family: 'Orbitron', monospace;
+            font-size: 0.82rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            letter-spacing: 1px;
+        }
+
+        /* ── LIVE STATS ── */
+        .live-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            margin-top: 12px;
+            background: rgba(0, 255, 136, 0.04);
+            border: 1px solid rgba(0, 255, 136, 0.12);
+            border-radius: 10px;
+        }
+
+        .live-bar.cyan-bar {
+            background: rgba(0, 229, 255, 0.04);
+            border-color: rgba(0, 229, 255, 0.12);
+        }
+        .live-bar.purple-bar {
+            background: rgba(191, 0, 255, 0.04);
+            border-color: rgba(191, 0, 255, 0.12);
+        }
+
+        .live-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--neon-green);
+            box-shadow: 0 0 8px var(--neon-green);
+            animation: blink 1.2s ease-in-out infinite;
+            flex-shrink: 0;
+        }
+        .live-dot.cyan {
+            background: var(--neon-cyan);
+            box-shadow: 0 0 8px var(--neon-cyan);
+        }
+        .live-dot.purple {
+            background: var(--neon-purple);
+            box-shadow: 0 0 8px var(--neon-purple);
+        }
+
+        .live-txt {
+            font-family: 'Orbitron', monospace;
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: var(--neon-green);
+            letter-spacing: 1.5px;
+        }
+        .live-txt.cyan {
+            color: var(--neon-cyan);
+        }
+        .live-txt.purple {
+            color: var(--neon-purple);
+        }
+
+        .live-msg {
+            font-size: 0.68rem;
+            color: var(--subtext);
+            margin-left: auto;
+            max-width: 55%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .stat-box {
+            padding: 13px 8px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 10px;
+        }
+
+        .stat-num {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            font-weight: 900;
+            line-height: 1;
+        }
+        .stat-lbl {
+            font-size: 0.58rem;
+            color: var(--subtext);
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-green .stat-num {
+            color: var(--neon-green);
+            text-shadow: 0 0 12px rgba(0, 255, 136, 0.45);
+        }
+        .stat-red .stat-num {
+            color: var(--neon-red);
+            text-shadow: 0 0 12px rgba(255, 34, 68, 0.45);
+        }
+        .stat-cyan .stat-num {
+            color: var(--neon-cyan);
+            text-shadow: 0 0 12px rgba(0, 229, 255, 0.45);
+        }
+
+        /* ── STOP WARNING ── */
+        .stop-warning {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            background: rgba(255, 34, 68, 0.06);
+            border: 1px solid rgba(255, 34, 68, 0.2);
+            border-radius: 10px;
+            font-size: 0.76rem;
+            color: rgba(255, 170, 170, 0.85);
+            line-height: 1.5;
+        }
+
+        /* ── GROUPS ── */
+        .groups-section {
+            display: none;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 480px) {
+            .panel {
+                padding: 18px 14px;
+            }
+            .connect-card {
+                padding: 20px 16px;
+            }
+            .topbar {
+                padding: 13px 16px;
+                gap: 12px;
+            }
+            .brand-name {
+                font-size: 1.5rem;
+                letter-spacing: 6px;
+            }
+            .online-badge {
+                font-size: 0.5rem;
+                padding: 4px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+        <div class="brand">
+            <div class="brand-name">🐊𝟵𝗠𝗔𝗡-𝗫-𝗬𝗔𝗠𝗗𝗛𝗨𝗗🐊</div>
+        </div>
+        <div class="online-badge">
+            <div class="online-dot"></div>
+            ONLINE
+        </div>
+    </div>
+
+    <div class="page">
+
+        <!-- CONNECT GATE -->
+        <div id="connectGate">
+            <div class="connect-card">
+
+                <div class="connect-hd">
+                    <div class="connect-ico">📱</div>
+                    <div>
+                        <div class="connect-title">Connect WhatsApp</div>
+                        <div class="connect-sub">Enter phone number → Get pairing code → Link in WhatsApp</div>
+                    </div>
+                </div>
+
+                <div class="fg">
+                    <label class="flbl">Phone Number (with country code)</label>
+                    <input type="text" id="gate-phone" class="finput" placeholder="e.g. 919876543210" />
+                </div>
+
+                <button class="btn btn-green" id="gate-connect-btn" onclick="doConnect()">
+                    <span>🔗</span> GET PAIRING CODE
+                </button>
+
+                <!-- Pairing code box -->
+                <div id="pairing-box" style="display:none;margin-top:16px;">
+                    <div style="text-align:center;padding:22px 16px;background:rgba(0,255,136,0.05);border:1.5px dashed rgba(0,255,136,0.35);border-radius:14px;animation:pglow 2s ease-in-out infinite;">
+                        <div style="font-size:0.7rem;font-weight:700;letter-spacing:2px;color:var(--subtext);text-transform:uppercase;margin-bottom:10px;">Your Pairing Code</div>
+                        <div id="pairing-code-display" style="font-family:'Orbitron',monospace;font-size:2.4rem;font-weight:900;letter-spacing:10px;color:var(--neon-green);text-shadow:0 0 24px rgba(0,255,136,0.6);"></div>
+                        <div style="font-size:0.72rem;color:var(--subtext);margin-top:10px;line-height:1.5;">WhatsApp → Settings → Linked Devices → Link a Device<br>Enter this code when prompted</div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:8px;margin-top:10px;padding:10px 14px;background:rgba(0,229,255,0.05);border:1px solid rgba(0,229,255,0.15);border-radius:8px;">
+                        <div style="width:6px;height:6px;border-radius:50%;background:var(--neon-cyan);box-shadow:0 0 7px var(--neon-cyan);animation:blink 1.2s ease-in-out infinite;flex-shrink:0;"></div>
+                        <span style="font-size:0.72rem;color:rgba(0,229,255,0.8);">Waiting for you to link the device in WhatsApp…</span>
+                    </div>
+                </div>
+
+                <div class="spin-wrap" id="gate-spinner">
+                    <div class="spin-ring"></div>
+                    <div class="spin-txt">Connecting to WhatsApp…</div>
+                </div>
+
+                <div class="result" id="gate-result"></div>
+
+            </div>
+        </div>
+
+        <!-- TOOL AREA -->
+        <div id="toolArea">
+
+            <!-- Key bar -->
+            <div class="key-bar">
+                <span class="key-label">KEY</span>
+                <span class="key-val" id="key-display">—</span>
+                <button class="copy-btn" onclick="copyUniqueKey()">Copy Key</button>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tool-tabs">
+                <button class="ttab tg on" onclick="switchTab('msg', this, 'tg')">
+                    <span class="tab-icon">💬</span>
+                    Message Sender
+                </button>
+                <button class="ttab tc" onclick="switchTab('photo', this, 'tc')">
+                    <span class="tab-icon">📷</span>
+                    Photo Sender
+                </button>
+                <button class="ttab tp" onclick="switchTab('sticker', this, 'tp')">
+                    <span class="tab-icon">🎭</span>
+                    Sticker Sender
+                </button>
+                <button class="ttab tr" onclick="switchTab('stop', this, 'tr')">
+                    <span class="tab-icon">⏹</span>
+                    Stop Process
+                </button>
+            </div>
+
+            <!-- ════ PANEL 1: MESSAGE SENDER ════ -->
+            <div id="panel-msg" class="panel panel-green on">
+                <div class="panel-hd">
+                    <div class="panel-ico ig">💬</div>
+                    <div>
+                        <div class="panel-hd-title col-green">Message Sender</div>
+                        <div class="panel-hd-sub">Blast text messages to any group or number (non-stop loop)</div>
+                    </div>
+                </div>
+
+                <div class="fg">
+                    <label class="flbl">Target (Group ID or Phone Number)</label>
+                    <input type="text" id="msg-target" class="finput" placeholder="e.g. 120363XXXXX@g.us or 919876543210" />
+                    <div style="margin-top:10px;">
+                        <button type="button" class="btn-ghost-green" onclick="fetchGroups('msg')">📋 Fetch My Groups</button>
+                    </div>
+                </div>
+
+                <div class="groups-section" id="msg-groups-sec">
+                    <div class="fg">
+                        <label class="flbl">Select Group</label>
+                        <select id="msg-group-select" class="finput" onchange="selectGroup('msg')">
+                            <option value="">-- Select a group --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="fg">
+                    <label class="flbl">Prefix / Haters Name <span class="opt">(optional)</span></label>
+                    <input type="text" id="msg-prefix" class="finput" placeholder="e.g. Hatername" />
+                </div>
+
+                <div class="fg">
+                    <label class="flbl">Message File (.txt)</label>
+                    <label class="file-drop" for="msg-file-input" id="msg-file-drop">
+                        <span class="file-drop-icon">📂</span>
+                        <span class="file-drop-txt" id="msg-file-txt">Click to choose a .txt file</span>
+                        <span class="file-drop-name ng" id="msg-file-name"></span>
+                    </label>
+                    <input type="file" id="msg-file-input" accept=".txt" onchange="updateFileDrop(this,'msg-file-drop','msg-file-txt','msg-file-name','ng')" />
+                </div>
+
+                <div class="fg">
+                    <label class="flbl">Delay (seconds between messages)</label>
+                    <input type="number" id="msg-speed" class="finput" min="1" value="5" />
+                </div>
+
+                <button class="btn btn-green" id="msg-start-btn" onclick="startMessaging()">
+                    <span>🚀</span> START SENDING
+                </button>
+
+                <div class="spin-wrap" id="msg-spinner">
+                    <div class="spin-ring"></div>
+                    <div class="spin-txt">Starting automation…</div>
+                </div>
+
+                <div class="result" id="msg-result"></div>
+
+                <div id="msg-live-stats" style="display:none;margin-top:14px;">
+                    <div class="live-bar">
+                        <div class="live-dot"></div>
+                        <span class="live-txt">LIVE — SENDING</span>
+                        <span class="live-msg" id="msg-last-msg"></span>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-box stat-green"><div class="stat-num" id="msg-stat-sent">0</div><div class="stat-lbl">Sent</div></div>
+                        <div class="stat-box stat-red"><div class="stat-num" id="msg-stat-fail">0</div><div class="stat-lbl">Failed</div></div>
+                        <div class="stat-box stat-cyan"><div class="stat-num" id="msg-stat-total">0</div><div class="stat-lbl">Total</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ════ PANEL 2: PHOTO SENDER ════ -->
+            <div id="panel-photo" class="panel panel-cyan">
+                <div class="panel-hd">
+                    <div class="panel-ico ic">📷</div>
+                    <div>
+                        <div class="panel-hd-title col-cyan">Photo Sender</div>
+                        <div class="panel-hd-sub">Send single or multiple photos (non-stop loop)</div>
+                    </div>
+                </div>
+
+                <div class="toggle-row">
+                    <button type="button" class="toggle-opt active-c" id="photo-single-btn" onclick="setPhotoMode('single')">📸 Single Photo</button>
+                    <button type="button" class="toggle-opt" id="photo-multi-btn" onclick="setPhotoMode('multi')">🗂️ Multi Photos (.txt list)</button>
+                </div>
+
+                <div class="fg">
+                    <label class="flbl">Target (Group ID or Phone Number)</label>
+                    <input type="text" id="photo-target" class="finput fc" placeholder="e.g. 120363XXXXX@g.us or 919876543210" />
+                    <div style="margin-top:10px;">
+                        <button type="button" class="btn-ghost-cyan" onclick="fetchGroups('photo')">📋 Fetch My Groups</button>
+                    </div>
+                </div>
+
+                <div class="groups-section" id="photo-groups-sec">
+                    <div class="fg">
+                        <label class="flbl">Select Group</label>
+                        <select id="photo-group-select" class="finput fc" onchange="selectGroup('photo')">
+                            <option value="">-- Select a group --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="fg">
+                    <label class="flbl">Caption <span class="opt">(optional)</span></label>
+                    <input type="text" id="photo-caption" class="finput fc" placeholder="e.g. Photo caption here" />
+                </div>
+
+                <div id="photo-single-sec" class="fg">
+                    <label class="flbl">Photo File (jpg / png / gif)</label>
+                    <label class="file-drop cyan-drop" for="photo-single-input" id="photo-single-drop">
+                        <span class="file-drop-icon">🖼️</span>
+                        <span class="file-drop-txt" id="photo-single-txt">Click to choose a photo</span>
+                        <span class="file-drop-name nc" id="photo-single-name"></span>
+                    </label>
+                    <input type="file" id="photo-single-input" accept="image/*" onchange="updateFileDrop(this,'photo-single-drop','photo-single-txt','photo-single-name','nc')" />
+                </div>
+
+                <div id="photo-multi-sec" class="fg" style="display:none;">
+                    <label class="flbl">Photo List File (.txt — one path or URL per line)</label>
+                    <label class="file-drop cyan-drop" for="photo-multi-input" id="photo-multi-drop">
+                        <span class="file-drop-icon">📂</span>
+                        <span class="file-drop-txt" id="photo-multi-txt">Click to choose a .txt file</span>
+                        <span class="file-drop-name nc" id="photo-multi-name"></span>
+                    </label>
+                    <input type="file" id="photo-multi-input" accept=".txt" onchange="updateFileDrop(this,'photo-multi-drop','photo-multi-txt','photo-multi-name','nc')" />
+                </div>
+
+                <div class="fg">
+                    <label class="flbl">Delay (seconds between photos)</label>
+                    <input type="number" id="photo-speed" class="finput fc" min="1" value="5" />
+                </div>
+
+                <button class="btn btn-cyan" id="photo-start-btn" onclick="startPhoto()">
+                    <span>📤</span> START SENDING
+                </button>
+
+                <div class="spin-wrap" id="photo-spinner">
+                    <div class="spin-ring cyan"></div>
+                    <div class="spin-txt">Sending photos…</div>
+                </div>
+
+                <div class="result" id="photo-result"></div>
+
+                <div id="photo-live-stats" style="display:none;margin-top:14px;">
+                    <div class="live-bar cyan-bar">
+                        <div class="live-dot cyan"></div>
+                        <span class="live-txt cyan">LIVE — SENDING</span>
+                        <span class="live-msg" id="photo-last-msg"></span>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-box stat-green"><div class="stat-num" id="photo-stat-sent">0</div><div class="stat-lbl">Sent</div></div>
+                        <div class="stat-box stat-red"><div class="stat-num" id="photo-stat-fail">0</div><div class="stat-lbl">Failed</div></div>
+                        <div class="stat-box stat-cyan"><div class="stat-num" id="photo-stat-total">0</div><div class="stat-lbl">Total</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ════ PANEL 3: STICKER SENDER ════ -->
+            <div id="panel-sticker" class="panel panel-purple">
+                <div class="panel-hd">
+                    <div class="panel-ico ip">🎭</div>
+                    <div>
+                        <div class="panel-hd-title col-purple">Sticker Sender</div>
+                        <div class="panel-hd-sub">Blast stickers non-stop to any group or number</div>
+                    </div>
+                </div>
+
+                <div class="fg">
+                    <label class="flbl">Target (Group ID or Phone Number)</label>
+                    <input type="text" id="sticker-target" class="finput fp" placeholder="e.g. 120363XXXXX@g.us or 919876543210" />
+                    <div style="margin-top:10px;">
+                        <button type="button" class="btn-ghost-purple" onclick="fetchGroups('sticker')">📋 Fetch My Groups</button>
+                    </div>
+                </div>
+
+                <div class="groups-section" id="sticker-groups-sec">
+                    <div class="fg">
+                        <label class="flbl">Select Group</label>
+                        <select id="sticker-group-select" class="finput fp" onchange="selectGroup('sticker')">
+                            <option value="">-- Select a group --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="fg">
+                    <label class="flbl">Sticker File (.webp / image)</label>
+                    <label class="file-drop purple-drop" for="sticker-file-input" id="sticker-file-drop">
+                        <span class="file-drop-icon">🎭</span>
+                        <span class="file-drop-txt" id="sticker-file-txt">Click to choose sticker (.webp or image)</span>
+                        <span class="file-drop-name np" id="sticker-file-name"></span>
+                    </label>
+                    <input type="file" id="sticker-file-input" accept=".webp,image/*" onchange="updateFileDrop(this,'sticker-file-drop','sticker-file-txt','sticker-file-name','np')" />
+                </div>
+
+                <div class="fg">
+                    <label class="flbl">Delay (seconds between stickers)</label>
+                    <input type="number" id="sticker-speed" class="finput fp" min="1" value="5" />
+                </div>
+
+                <button class="btn btn-purple" id="sticker-start-btn" onclick="startSticker()">
+                    <span>🎭</span> START SENDING
+                </button>
+
+                <div class="spin-wrap" id="sticker-spinner">
+                    <div class="spin-ring purple"></div>
+                    <div class="spin-txt">Sending stickers…</div>
+                </div>
+
+                <div class="result" id="sticker-result"></div>
+
+                <div id="sticker-live-stats" style="display:none;margin-top:14px;">
+                    <div class="live-bar purple-bar">
+                        <div class="live-dot purple"></div>
+                        <span class="live-txt purple">LIVE — SENDING</span>
+                        <span class="live-msg" id="sticker-last-msg"></span>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-box stat-green"><div class="stat-num" id="sticker-stat-sent">0</div><div class="stat-lbl">Sent</div></div>
+                        <div class="stat-box stat-red"><div class="stat-num" id="sticker-stat-fail">0</div><div class="stat-lbl">Failed</div></div>
+                        <div class="stat-box stat-cyan"><div class="stat-num" id="sticker-stat-total">0</div><div class="stat-lbl">Total</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ════ PANEL 4: STOP PROCESS ════ -->
+            <div id="panel-stop" class="panel panel-red">
+                <div class="panel-hd">
+                    <div class="panel-ico ir">🛑</div>
+                    <div>
+                        <div class="panel-hd-title col-red">Stop Process</div>
+                        <div class="panel-hd-sub">Halt automation and logout from WhatsApp</div>
+                    </div>
+                </div>
+
+                <div class="stop-warning">
+                    <span>⚠️</span>
+                    This will immediately stop all messaging and log out your session. This action cannot be undone.
+                </div>
+
+                <div class="fg">
+                    <label class="flbl">Unique Key</label>
+                    <input type="text" id="stop-key-input" class="finput" placeholder="Paste your unique key here" />
+                </div>
+
+                <button class="btn btn-red" id="stop-btn" onclick="doStop()">
+                    <span>⏹</span> STOP &amp; LOGOUT
+                </button>
+
+                <div class="spin-wrap" id="stop-spinner">
+                    <div class="spin-ring red"></div>
+                    <div class="spin-txt">Stopping process…</div>
+                </div>
+
+                <div class="result" id="stop-result"></div>
+            </div>
+
+        </div><!-- /#toolArea -->
+
+    </div><!-- /.page -->
+
+    <script>
+        const API = window.location.origin;
+
+        let UNIQUE_KEY = '';
+        let photoMode = 'single';
+
+        const statsPolls = { msg: null, photo: null, sticker: null };
+
+        /* ── Utilities ── */
+        function updateFileDrop(input, dropId, txtId, nameId, colorClass) {
+            const file = input.files[0];
+            const drop = document.getElementById(dropId);
+            const txt = document.getElementById(txtId);
+            const nm = document.getElementById(nameId);
+            if (file) {
+                drop.classList.add('has-file');
+                txt.textContent = 'File selected';
+                nm.textContent = file.name + '  (' + (file.size / 1024).toFixed(1) + ' KB)';
+                nm.className = 'file-drop-name ' + colorClass;
+            } else {
+                drop.classList.remove('has-file');
+                txt.textContent = 'Click to choose a file';
+                nm.textContent = '';
+                nm.className = 'file-drop-name ' + colorClass;
+            }
+        }
+
+        function showResult(id, type, html) {
+            const el = document.getElementById(id);
+            el.className = 'result show ' + type;
+            el.innerHTML = html;
+        }
+
+        function hideResult(id) {
+            document.getElementById(id).className = 'result';
+        }
+
+        function copyUniqueKey() {
+            navigator.clipboard.writeText(UNIQUE_KEY).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                if (btn) {
+                    btn.textContent = 'Copied!';
+                    setTimeout(() => btn.textContent = 'Copy Key', 2000);
+                }
+            }).catch(() => {
+                // Fallback
+                const keyEl = document.getElementById('key-display');
+                if (keyEl) {
+                    const range = document.createRange();
+                    range.selectNode(keyEl);
+                    window.getSelection().removeAllRanges();
+                    window.getSelection().addRange(range);
+                    document.execCommand('copy');
+                }
+            });
+        }
+
+        /* ── Tab switching ── */
+        function switchTab(name, btn, colorClass) {
+            document.querySelectorAll('.ttab').forEach(b => b.classList.remove('on'));
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
+            if (btn) btn.classList.add('on');
+            const panel = document.getElementById('panel-' + name);
+            if (panel) panel.classList.add('on');
+        }
+
+        /* ── Photo mode ── */
+        function setPhotoMode(mode) {
+            photoMode = mode;
+            const sBtn = document.getElementById('photo-single-btn');
+            const mBtn = document.getElementById('photo-multi-btn');
+            const sSec = document.getElementById('photo-single-sec');
+            const mSec = document.getElementById('photo-multi-sec');
+            if (mode === 'single') {
+                if (sBtn) sBtn.className = 'toggle-opt active-c';
+                if (mBtn) mBtn.className = 'toggle-opt';
+                if (sSec) sSec.style.display = 'block';
+                if (mSec) mSec.style.display = 'none';
+            } else {
+                if (sBtn) sBtn.className = 'toggle-opt';
+                if (mBtn) mBtn.className = 'toggle-opt active-c';
+                if (sSec) sSec.style.display = 'none';
+                if (mSec) mSec.style.display = 'block';
+            }
+        }
+
+        /* ── CONNECT ── */
+        async function doConnect() {
+            const phone = document.getElementById('gate-phone').value.trim();
+            if (!phone) {
+                showResult('gate-result', 'error', '<strong>❌ Phone number daalna zaroori hai!</strong>');
+                return;
+            }
+
+            const btn = document.getElementById('gate-connect-btn');
+            btn.disabled = true;
+            document.getElementById('gate-spinner').classList.add('on');
+            hideResult('gate-result');
+            document.getElementById('pairing-box').style.display = 'none';
+
+            try {
+                const res = await fetch(API + '/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phoneNumber: phone })
+                });
+                const data = await res.json();
+
+                document.getElementById('gate-spinner').classList.remove('on');
+
+                if (data.success) {
+                    UNIQUE_KEY = data.uniqueKey;
+                    if (data.connected) {
+                        onConnected();
+                    } else if (data.pairingCode) {
+                        document.getElementById('pairing-code-display').textContent = data.pairingCode;
+                        document.getElementById('pairing-box').style.display = 'block';
+                        pollConnection();
+                    } else {
+                        showResult('gate-result', 'error', '<strong>❌ Unexpected response from server</strong>');
+                        btn.disabled = false;
+                    }
+                } else {
+                    showResult('gate-result', 'error',
+                        '<strong>❌ ' + (data.message || 'Connection failed') + '</strong>' +
+                        (data.error ? '<br><span style="font-size:.74rem;opacity:.7">' + data.error + '</span>' : '')
+                    );
+                    btn.disabled = false;
+                }
+            } catch (err) {
+                document.getElementById('gate-spinner').classList.remove('on');
+                showResult('gate-result', 'error', '<strong>❌ Network Error: ' + err.message + '</strong>');
+                btn.disabled = false;
+            }
+        }
+
+        async function pollConnection() {
+            if (!UNIQUE_KEY) return;
+            try {
+                const res = await fetch(API + '/getGroupUID', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ uniqueKey: UNIQUE_KEY })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    onConnected();
+                } else {
+                    setTimeout(pollConnection, 3000);
+                }
+            } catch (err) {
+                setTimeout(pollConnection, 3000);
+            }
+        }
+
+        function onConnected() {
+            document.getElementById('key-display').textContent = UNIQUE_KEY;
+            document.getElementById('stop-key-input').value = UNIQUE_KEY;
+            const gate = document.getElementById('connectGate');
+            if (gate) {
+                gate.style.transition = 'opacity 0.4s ease';
+                gate.style.opacity = '0';
+                setTimeout(() => {
+                    gate.style.display = 'none';
+                    document.getElementById('toolArea').style.display = 'block';
+                }, 400);
+            }
+        }
+
+        /* ── Fetch Groups ── */
+        async function fetchGroups(prefix) {
+            if (!UNIQUE_KEY) {
+                alert('Connect WhatsApp first!');
+                return;
+            }
+            try {
+                const res = await fetch(API + '/getGroupUID', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ uniqueKey: UNIQUE_KEY })
+                });
+                const data = await res.json();
+                if (data.success && data.groupUIDs) {
+                    const sel = document.getElementById(prefix + '-group-select');
+                    if (!sel) return;
+                    sel.innerHTML = '<option value="">-- Select a group --</option>';
+                    data.groupUIDs.forEach(function(g) {
+                        const opt = document.createElement('option');
+                        opt.value = g.groupId;
+                        opt.textContent = g.groupName;
+                        sel.appendChild(opt);
+                    });
+                    const sec = document.getElementById(prefix + '-groups-sec');
+                    if (sec) sec.style.display = 'block';
+                } else {
+                    alert('Error: ' + (data.message || 'Could not fetch groups'));
+                }
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
+        }
+
+        function selectGroup(prefix) {
+            const sel = document.getElementById(prefix + '-group-select');
+            if (!sel) return;
+            const val = sel.value;
+            const target = document.getElementById(prefix + '-target');
+            if (target && val) target.value = val;
+        }
+
+        /* ── Stats Polling ── */
+        function startStatsPoll(pollKey, sentId, failId, totalId, lastMsgId, liveBlockId) {
+            if (statsPolls[pollKey]) clearInterval(statsPolls[pollKey]);
+            const liveBlock = document.getElementById(liveBlockId);
+            if (liveBlock) liveBlock.style.display = 'block';
+
+            statsPolls[pollKey] = setInterval(function() {
+                if (!UNIQUE_KEY) return;
+                fetch(API + '/sessionStatus/' + UNIQUE_KEY)
+                    .then(function(res) { return res.json(); })
+                    .then(function(data) {
+                        if (data.exists) {
+                            const sentEl = document.getElementById(sentId);
+                            const failEl = document.getElementById(failId);
+                            const totalEl = document.getElementById(totalId);
+                            const lastEl = document.getElementById(lastMsgId);
+                            if (sentEl) sentEl.textContent = data.sent || 0;
+                            if (failEl) failEl.textContent = data.failed || 0;
+                            if (totalEl) totalEl.textContent = data.messageCount || 1;
+                            if (lastEl && data.lastMessage) lastEl.textContent = '· ' + data.lastMessage;
+                        }
+                    })
+                    .catch(function() { /* silent */ });
+            }, 3000);
+        }
+
+        /* ── MESSAGE SENDER ── */
+        async function startMessaging() {
+            const target = document.getElementById('msg-target').value.trim();
+            const prefix = document.getElementById('msg-prefix').value.trim();
+            const speed = document.getElementById('msg-speed').value;
+            const msgFile = document.getElementById('msg-file-input').files[0];
+
+            if (!target) {
+                showResult('msg-result', 'error', '<strong>❌ Target daalna zaroori hai!</strong>');
+                return;
+            }
+            if (!msgFile) {
+                showResult('msg-result', 'error', '<strong>❌ Please upload a .txt message file!</strong>');
+                return;
+            }
+
+            const fd = new FormData();
+            fd.append('uniqueKey', UNIQUE_KEY);
+            fd.append('target', target);
+            fd.append('hatersName', prefix);
+            fd.append('speed', speed);
+            fd.append('messageFile', msgFile);
+
+            const btn = document.getElementById('msg-start-btn');
+            if (btn) btn.disabled = true;
+            document.getElementById('msg-spinner').classList.add('on');
+            hideResult('msg-result');
+
+            try {
+                const res = await fetch(API + '/startMessaging', { method: 'POST', body: fd });
+
+                const contentType = res.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new Error('Server returned non-JSON response. Check if backend is running correctly.');
+                }
+
+                const data = await res.json();
+                document.getElementById('msg-spinner').classList.remove('on');
+
+                if (data.success) {
+                    showResult('msg-result', 'success',
+                        '<h3>🚀 Automation Started!</h3>' +
+                        '<p>Sending <strong>' + data.messageCount + '</strong> messages every <strong>' + speed +
+                        's</strong> — non-stop loop</p>' +
+                        '<p style="margin-top:4px;">Target: <code style="background:rgba(255,255,255,0.07);padding:2px 8px;border-radius:6px;font-size:.75rem">' +
+                        target + '</code></p>'
+                    );
+                    startStatsPoll('msg', 'msg-stat-sent', 'msg-stat-fail', 'msg-stat-total', 'msg-last-msg',
+                        'msg-live-stats');
+                } else {
+                    showResult('msg-result', 'error', '<strong>❌ ' + data.message + '</strong>');
+                    if (btn) btn.disabled = false;
+                }
+            } catch (err) {
+                document.getElementById('msg-spinner').classList.remove('on');
+                showResult('msg-result', 'error', '<strong>❌ ' + err.message + '</strong>');
+                if (btn) btn.disabled = false;
+            }
+        }
+
+        /* ── PHOTO SENDER ── */
+        async function startPhoto() {
+            const target = document.getElementById('photo-target').value.trim();
+            const caption = document.getElementById('photo-caption').value.trim();
+            const speed = document.getElementById('photo-speed').value;
+
+            if (!target) {
+                showResult('photo-result', 'error', '<strong>❌ Target daalna zaroori hai!</strong>');
+                return;
+            }
+
+            const fd = new FormData();
+            fd.append('uniqueKey', UNIQUE_KEY);
+            fd.append('target', target);
+            fd.append('caption', caption);
+            fd.append('speed', speed);
+            fd.append('mode', photoMode);
+
+            if (photoMode === 'single') {
+                const f = document.getElementById('photo-single-input').files[0];
+                if (!f) {
+                    showResult('photo-result', 'error', '<strong>❌ Please choose a photo file!</strong>');
+                    return;
+                }
+                fd.append('photoFile', f);
+            } else {
+                const f = document.getElementById('photo-multi-input').files[0];
+                if (!f) {
+                    showResult('photo-result', 'error', '<strong>❌ Please choose a .txt file with photo list!</strong>');
+                    return;
+                }
+                fd.append('photoListFile', f);
+            }
+
+            const btn = document.getElementById('photo-start-btn');
+            if (btn) btn.disabled = true;
+            document.getElementById('photo-spinner').classList.add('on');
+            hideResult('photo-result');
+
+            try {
+                const res = await fetch(API + '/startPhotoSending', { method: 'POST', body: fd });
+
+                const contentType = res.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new Error('Server returned non-JSON response. Route /startPhotoSending missing on backend!');
+                }
+
+                const data = await res.json();
+                document.getElementById('photo-spinner').classList.remove('on');
+
+                if (data.success) {
+                    showResult('photo-result', 'success',
+                        '<h3>📤 Photo Sending Started!</h3>' +
+                        '<p>Sending photos every <strong>' + speed + 's</strong> — non-stop loop</p>' +
+                        '<p style="margin-top:4px;">Target: <code style="background:rgba(255,255,255,0.07);padding:2px 8px;border-radius:6px;font-size:.75rem">' +
+                        target + '</code></p>'
+                    );
+                    startStatsPoll('photo', 'photo-stat-sent', 'photo-stat-fail', 'photo-stat-total', 'photo-last-msg',
+                        'photo-live-stats');
+                } else {
+                    showResult('photo-result', 'error', '<strong>❌ ' + data.message + '</strong>');
+                    if (btn) btn.disabled = false;
+                }
+            } catch (err) {
+                document.getElementById('photo-spinner').classList.remove('on');
+                showResult('photo-result', 'error', '<strong>❌ ' + err.message + '</strong>');
+                if (btn) btn.disabled = false;
+            }
+        }
+
+        /* ── STICKER SENDER ── */
+        async function startSticker() {
+            const target = document.getElementById('sticker-target').value.trim();
+            const speed = document.getElementById('sticker-speed').value;
+            const stickerFile = document.getElementById('sticker-file-input').files[0];
+
+            if (!target) {
+                showResult('sticker-result', 'error', '<strong>❌ Target daalna zaroori hai!</strong>');
+                return;
+            }
+            if (!stickerFile) {
+                showResult('sticker-result', 'error', '<strong>❌ Please choose a sticker file!</strong>');
+                return;
+            }
+
+            const fd = new FormData();
+            fd.append('uniqueKey', UNIQUE_KEY);
+            fd.append('target', target);
+            fd.append('speed', speed);
+            fd.append('stickerFile', stickerFile);
+
+            const btn = document.getElementById('sticker-start-btn');
+            if (btn) btn.disabled = true;
+            document.getElementById('sticker-spinner').classList.add('on');
+            hideResult('sticker-result');
+
+            try {
+                const res = await fetch(API + '/startStickerSending', { method: 'POST', body: fd });
+
+                const contentType = res.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new Error('Server returned non-JSON response. Route /startStickerSending missing on backend!');
+                }
+
+                const data = await res.json();
+                document.getElementById('sticker-spinner').classList.remove('on');
+
+                if (data.success) {
+                    showResult('sticker-result', 'success',
+                        '<h3>🎭 Sticker Sending Started!</h3>' +
+                        '<p>Sending stickers every <strong>' + speed + 's</strong> — non-stop loop</p>' +
+                        '<p style="margin-top:4px;">Target: <code style="background:rgba(255,255,255,0.07);padding:2px 8px;border-radius:6px;font-size:.75rem">' +
+                        target + '</code></p>'
+                    );
+                    startStatsPoll('sticker', 'sticker-stat-sent', 'sticker-stat-fail', 'sticker-stat-total',
+                        'sticker-last-msg', 'sticker-live-stats');
+                } else {
+                    showResult('sticker-result', 'error', '<strong>❌ ' + data.message + '</strong>');
+                    if (btn) btn.disabled = false;
+                }
+            } catch (err) {
+                document.getElementById('sticker-spinner').classList.remove('on');
+                showResult('sticker-result', 'error', '<strong>❌ ' + err.message + '</strong>');
+                if (btn) btn.disabled = false;
+            }
+        }
+
+        /* ── STOP ── */
+        async function doStop() {
+            const key = document.getElementById('stop-key-input').value.trim();
+            if (!key) {
+                showResult('stop-result', 'error', '<strong>❌ Key paste karo pehle!</strong>');
+                return;
+            }
+
+            const btn = document.getElementById('stop-btn');
+            if (btn) btn.disabled = true;
+            document.getElementById('stop-spinner').classList.add('on');
+            hideResult('stop-result');
+
+            try {
+                const res = await fetch(API + '/stop', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ uniqueKey: key })
+                });
+                const data = await res.json();
+                document.getElementById('stop-spinner').classList.remove('on');
+
+                if (data.success) {
+                    showResult('stop-result', 'success', '<h3>✅ ' + data.message + '</h3>');
+                    if (key === UNIQUE_KEY) {
+                        Object.values(statsPolls).forEach(function(p) { if (p) clearInterval(p); });
+                        UNIQUE_KEY = '';
+                        // Reset UI
+                        document.getElementById('connectGate').style.display = 'block';
+                        document.getElementById('connectGate').style.opacity = '1';
+                        document.getElementById('toolArea').style.display = 'none';
+                        document.getElementById('gate-connect-btn').disabled = false;
+                        document.getElementById('pairing-box').style.display = 'none';
+                    }
+                } else {
+                    showResult('stop-result', 'error', '<strong>❌ ' + data.message + '</strong>');
+                }
+            } catch (err) {
+                document.getElementById('stop-spinner').classList.remove('on');
+                showResult('stop-result', 'error', '<strong>❌ ' + err.message + '</strong>');
+            }
+
+            if (btn) btn.disabled = false;
+        }
+    </script>
+
+    <!-- ANIMATED BACKGROUND -->
+    <script>
+        (function() {
+            var canvas = document.getElementById('bg-canvas');
+            var ctx = canvas.getContext('2d');
+
+            var orbs = [
+                { x: 0.10, y: 0.15, r: 0.40, vx: 0.00012, vy: 0.00008, c: [0, 255, 136] },
+                { x: 0.85, y: 0.10, r: 0.30, vx: -0.00010, vy: 0.00012, c: [0, 229, 255] },
+                { x: 0.50, y: 0.65, r: 0.35, vx: 0.00009, vy: -0.00010, c: [191, 0, 255] },
+                { x: 0.90, y: 0.60, r: 0.25, vx: -0.00014, vy: -0.00007, c: [0, 180, 255] },
+                { x: 0.15, y: 0.55, r: 0.28, vx: 0.00010, vy: 0.00014, c: [0, 255, 100] },
+                { x: 0.60, y: 0.30, r: 0.32, vx: -0.00008, vy: 0.00011, c: [100, 0, 255] },
+            ];
+
+            var particles = [];
+            for (var i = 0; i < 60; i++) {
+                particles.push({
+                    x: Math.random(),
+                    y: Math.random(),
+                    r: 0.5 + Math.random() * 1.6,
+                    vx: (Math.random() - 0.5) * 0.00013,
+                    vy: (Math.random() - 0.5) * 0.00013,
+                    alpha: 0.15 + Math.random() * 0.45,
+                });
+            }
+
+            function resize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize();
+
+            var t = 0;
+
+            function draw() {
+                var W = canvas.width,
+                    H = canvas.height;
+                ctx.clearRect(0, 0, W, H);
+
+                var bg = ctx.createLinearGradient(0, 0, W, H);
+                bg.addColorStop(0, '#030810');
+                bg.addColorStop(0.5, '#060c16');
+                bg.addColorStop(1, '#040810');
+                ctx.fillStyle = bg;
+                ctx.fillRect(0, 0, W, H);
+
+                orbs.forEach(function(o) {
+                    o.x += o.vx;
+                    o.y += o.vy;
+                    if (o.x < 0 || o.x > 1) o.vx *= -1;
+                    if (o.y < 0 || o.y > 1) o.vy *= -1;
+
+                    var cx = o.x * W,
+                        cy = o.y * H;
+                    var rad = o.r * Math.max(W, H);
+                    var breathe = 1 + 0.04 * Math.sin(t * 0.6 + o.x * 7);
+                    var r = o.c[0],
+                        g = o.c[1],
+                        b = o.c[2];
+                    var gr = ctx.createRadialGradient(cx, cy, 0, cx, cy, rad * breathe);
+                    gr.addColorStop(0, 'rgba(' + r + ',' + g + ',' + b + ',0.27)');
+                    gr.addColorStop(0.4, 'rgba(' + r + ',' + g + ',' + b + ',0.09)');
+                    gr.addColorStop(1, 'rgba(' + r + ',' + g + ',' + b + ',0)');
+                    ctx.save();
+                    ctx.filter = 'blur(60px)';
+                    ctx.fillStyle = gr;
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, rad * breathe, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.restore();
+                });
+
+                ctx.strokeStyle = 'rgba(0,255,136,0.016)';
+                ctx.lineWidth = 0.5;
+                for (var x = 0; x < W; x += 60) {
+                    ctx.beginPath();
+                    ctx.moveTo(x, 0);
+                    ctx.lineTo(x, H);
+                    ctx.stroke();
+                }
+                for (var y = 0; y < H; y += 60) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, y);
+                    ctx.lineTo(W, y);
+                    ctx.stroke();
+                }
+
+                particles.forEach(function(p) {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    if (p.x < 0) p.x = 1;
+                    if (p.x > 1) p.x = 0;
+                    if (p.y < 0) p.y = 1;
+                    if (p.y > 1) p.y = 0;
+                    var pulse = p.alpha * (0.6 + 0.4 * Math.sin(t * 1.4 + p.x * 25));
+                    ctx.beginPath();
+                    ctx.arc(p.x * W, p.y * H, p.r, 0, Math.PI * 2);
+                    ctx.fillStyle = 'rgba(0,255,136,' + pulse + ')';
+                    ctx.fill();
+                });
+
+                t += 0.016;
+                requestAnimationFrame(draw);
+            }
+
+            draw();
+        })();
+    </script>
+
+</body>
+</html>
