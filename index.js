@@ -2,7 +2,8 @@ import express from 'express';
 import fs from 'fs';
 import chalk from 'chalk';
 import multer from 'multer';
-import makeWASocket, {
+import {
+  makeWASocket,
   useMultiFileAuthState,
   makeCacheableSignalKeyStore,
   DisconnectReason,
@@ -12,7 +13,7 @@ import makeWASocket, {
 import pino from 'pino';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import crypto from 'crypto';
+import crypto from 'node:crypto';   // ✅ fixed: node:crypto
 import { Boom } from '@hapi/boom';
 import cors from 'cors';
 
