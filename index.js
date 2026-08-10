@@ -2,7 +2,8 @@ import express from 'express';
 import fs from 'fs';
 import chalk from 'chalk';
 import multer from 'multer';
-import makeWASocket, {
+import {
+  makeWASocket,
   useMultiFileAuthState,
   makeCacheableSignalKeyStore,
   DisconnectReason,
@@ -269,7 +270,7 @@ const connectAndLogin = async (phoneNumber, uniqueKey, sendPairingCode = null) =
       if (!fs.existsSync(sessionPath)) fs.mkdirSync(sessionPath, { recursive: true });
 
       const { state, saveCreds } = await useMultiFileAuthState(sessionPath);
-      const { version }          = await fetchLatestBaileysVersion();
+      const version = [4, 0, 0]; // 🔥 Hardcoded to avoid timeout
 
       const MznKing = makeWASocket({
         version,
@@ -284,7 +285,7 @@ const connectAndLogin = async (phoneNumber, uniqueKey, sendPairingCode = null) =
         markOnlineOnConnect:          true,
         getMessage:                   async () => undefined,
         keepAliveIntervalMs:          30000,
-        connectTimeoutMs:             60000,
+        connectTimeoutMs:             120000, // 🔥 Increased from 60000 to 120000
         defaultQueryTimeoutMs:        undefined,
         retryRequestDelayMs:          250,
       });
