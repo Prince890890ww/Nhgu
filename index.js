@@ -14,6 +14,7 @@ import pino from 'pino';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import crypto from 'node:crypto';   // ✅ fixed: node:crypto
+global.crypto = crypto;
 import { Boom } from '@hapi/boom';
 import cors from 'cors';
 
